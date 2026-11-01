@@ -63,4 +63,34 @@ class Model:
     def get_num_edges(self) -> int:
         return self._grafo.number_of_edges()
 
+    def getAllNodes(self, genere):
+        return DAO.getAllNodes(genere)
+
+    def getTop5Archi(self):
+        # return sorted(self._grafo.edges(data=True), key=lambda x: x[2]["weight"], reverse=True)[:10]
+        archi = self._grafo.edges(data=True)
+        return sorted(archi,
+                      key=lambda x: (x[2]["weight"]),# x[0].Name, x[1].Name),
+                      reverse=True)[:5]
+
+    def getTop5ArchiInfluenz(self):
+        # return sorted(self._grafo.edges(data=True), key=lambda x: x[2]["weight"], reverse=True)[:10]
+        # archi = self._grafo.edges(data=True)
+        risultati = []
+
+        for p in self._grafo.nodes:
+            uscenti = self._grafo.out_edges(p, data=True)
+            entranti = self._grafo.in_edges(p, data=True)
+            numero = len(uscenti)
+            peso = sum(d["weight"] for _, _, d in uscenti)   - \
+               sum(d["weight"] for _, _, d in entranti)
+
+            risultati.append((p, peso))
+            #risultati.append((p, numero, peso))
+        risultati.sort(key=lambda x: x[1], reverse=True)
+        if len(risultati) == 0:
+            return None
+
+        return risultati[0]
+
 
