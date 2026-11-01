@@ -78,9 +78,15 @@ class DAO():
                       """
 
         cursor.execute(query, (idA,genere))
-        for row in cursor:
-            results.append(row["quantity"])
+        row = cursor.fetchone()
+       # for row in cursor:
+        #    results.append(row["quantity"])
 
         cursor.close()
         conn.close()
-        return results
+        # Se non ci sono vendite sum() restituisce None, quindi usiamo or 0
+        if row and row["quantity"] is not None:
+            return int(row["quantity"])
+        return 0
+
+       # return results
