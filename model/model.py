@@ -66,6 +66,9 @@ class Model:
     def getAllNodes(self, genere):
         return DAO.getAllNodes(genere)
 
+    def getProdottoById(self, idP):
+        return self._idMapA[int(idP)]
+
     def getTop5Archi(self):
         # return sorted(self._grafo.edges(data=True), key=lambda x: x[2]["weight"], reverse=True)[:10]
         archi = self._grafo.edges(data=True)
@@ -92,5 +95,49 @@ class Model:
             return None
 
         return risultati[0]
+
+    def getGruppoClienti(self, start_node):
+        self._best_path = []
+        self._best_score = float("-inf")
+
+        parziale = [start_node]
+        score = start_node.popolarita
+
+        # self._ricorsione(parziale,  score)
+        self._ricorsione(parziale, 0, )
+        return self._best_path, self._best_score
+
+    def _ricorsione(self, parziale, score):
+        ultimo = parziale[-1]
+        # Controllo se il percorso attuale è migliore
+        if len(parziale) > len(self._best_path):  # massimizzare il numero di archi.
+            self._best_path = list(parziale)
+            self._best_score = score
+
+        # Caso terminale: abbiamo raggiunto la lunghezza richiesta
+        # if len(parziale) == k:
+        # if ultimo == end_node:
+        # if score < self._best_score: #QUESTA MINIMIZZA IL FATTURATO COMPLESSIVO
+        # self._best_score = score
+        #  self._best_path = list(parziale)
+
+        # Esploro i vicini raggiungibili con un arco uscente
+        for vicino in self._grafo.successors(ultimo):
+
+            # Non posso visitare due volte lo stesso nodo
+            if vicino not in parziale:
+                # Il fatturato deve essere decrescente
+                if vicino.popolarita <= ultimo.popolarita:
+                    # Recupero il peso dell'arco
+                    # peso = self._grafo[ultimo][vicino]["weight"]
+                    # I pesi devono essere strettamente decrescenti
+                    # if ultimo_peso is None or peso <= ultimo_peso:
+                    # Aggiungo il vicino al percorso
+                    parziale.append(vicino)
+                    # Continuo la ricorsione aggiornando il punteggio
+                    self._ricorsione(parziale, score + vicino.popolarita)
+                    # Tolgo il vicino per provare un'altra possibilità
+                    parziale.pop()
+
 
 

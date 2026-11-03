@@ -87,4 +87,33 @@ class Controller:
         if self._model.get_num_nodes() == 0 or self._model.get_num_edges() is None:
             self._view.create_alert("Creare prima il grafo!", color="red")
             return
-        pass
+        start = self._model.getProdottoById(self._view._ddArtist.value)
+        # end = self._model.getProdottoById(self._view._ddProdEnd.value)
+        # qui dovremmo fare i solti controlli sulla validità
+
+        if start is None:
+            self._view._txt_result.controls.append(
+                ft.Text(f"Errore ! devi inserire i nodi iniziali   per procedere!", color="red")
+            )
+            self._view.update_page()
+            return
+
+        # Calcolo il percorso di peso massimo
+        percorso, peso = self._model.getGruppoClienti(start)
+
+        # Visualizzo il risultato
+        self._view._txt_result.controls.append(
+            ft.Text("Percorso :", weight="bold", color="orange"))
+
+        for i in range(len(percorso)):
+            self._view._txt_result.controls.append(
+                ft.Text(f"Ordine {percorso[i]. ArtistId} - " f" {percorso[i].popolarita}"))
+
+        self._view._txt_result.controls.append(
+            ft.Text(f"Lunghezza percorso trovato:{len(percorso) - 1}", color="green")
+            # metto il -1 PK CHIEDE IL NUMERO DI ARCHI
+        )
+        self._view._txt_result.controls.append(
+            ft.Text(f"Fatturato totale: {peso}", color="green")
+        )
+        self._view.update_page()
